@@ -1,0 +1,19 @@
+__pycache__/
+*.pyc
+venv/
+.env/
+.venv/
+dist/
+build/
+*.egg-info/
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.env
+.idea/
+alembic.ini
+alembic/env.py
+*.log, *.txt
+core/env.py
