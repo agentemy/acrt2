@@ -27,7 +27,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_PORT: ${POSTGRES_PORT}
-      Authorization_key: ${AUTHORIZATION_KEY}
+      AUTHORIZATION_KEY: ${AUTHORIZATION_KEY}
     depends_on:
       db:
         condition: service_healthy
