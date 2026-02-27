@@ -65,11 +65,11 @@ VALUES
     (1, 'IND-000003', 1741805100000, 1, 8.76,  4.12);
 
 -- emotional_metrics
-INSERT INTO emotional_metrics (expedition_id, individual_number, timestamp, session, attention, relaxation, stress, cognitive_load)
+INSERT INTO emotional_metrics (expedition_id, individual_number, timestamp, session, attention, relaxation, cognitive_load)
 VALUES
-    (1, 'IND-000002', 1741802000000, 1, 0.82, 0.65, 0.38, 0.71),
-    (1, 'IND-000003', 1741805600000, 1, 0.91, 0.48, 0.22, 0.85),
-    (1, 'IND-000004', 1741809200000, 1, 0.67, 0.79, 0.55, 0.62);
+    (1, 'IND-000002', 1741802000000, 1, 0.82, 0.65, 0.71),
+    (1, 'IND-000003', 1741805600000, 1, 0.91, 0.48, 0.85),
+    (1, 'IND-000004', 1741809200000, 1, 0.67, 0.79, 0.62);
 
 -- mems_metrics (акселерометр + гироскоп)
 INSERT INTO mems_metrics (expedition_id, individual_number, timestamp, session,
