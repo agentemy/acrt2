@@ -27,3 +27,9 @@ async def get_from_nlp_metrics(
                 }
                 for r in rows
             ]
+
+
+async def get_from_physical_metrics(
+    individual_number: str,
+) -> List[Dict[str, Any]]:
+    pass
