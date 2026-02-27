@@ -13,6 +13,7 @@ class DatabaseConfig:
 @dataclass
 class Config:
     db: DatabaseConfig
+    auth_key: str
 
 
 
@@ -30,4 +31,5 @@ def load_config(path: str = None) -> Config:
 
     return Config(
         db=db_conf,
+        auth_key=env("AUTHORIZATION_KEY")
     )
