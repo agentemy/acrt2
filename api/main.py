@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 from db.database import init_models, async_engine
 from routes.metrics import metrics
 from routes.expedition import expedition
+from routes.gigachat_routes import gigachat_router
 
 @asynccontextmanager
 async def lifespan(app):
@@ -15,6 +16,7 @@ app = FastAPI(lifespan=lifespan)
 
 app.include_router(metrics, prefix="/metrics")
 app.include_router(expedition, prefix="/expedition")
+app.include_router(gigachat_router, prefix="/giga")
 
 
 @app.get("/")
