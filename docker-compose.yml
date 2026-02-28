@@ -5,9 +5,9 @@ services:
     image: postgres:13
     restart: unless-stopped
     environment:
-      POSTGRES_DB: arctic_team
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: egor
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
@@ -19,7 +19,7 @@ services:
       timeout: 5s
       retries: 5
 
-  api:
+  arctic:
     build: api
     environment:
       POSTGRES_DB: ${POSTGRES_DB}

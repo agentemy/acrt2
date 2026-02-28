@@ -9,7 +9,7 @@ from db.data_extraction import (
 )
 gigachat_router = APIRouter()
 
-@gigachat_router.get("/advices/{ind_num}/{expedition_id}")
+@gigachat_router.get("/advices/{ind_num}/{expedition_id}", description="Получить аналитику от GigaChat")
 async def giga(ind_num: str,
                expedition_id: int):
     nlp_metrics = await get_nlp_metrics(ind_num, expedition_id)
