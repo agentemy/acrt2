@@ -72,7 +72,7 @@ async def get_relaxation_chart(
     return await create_relaxation_chart(ind_num, expedition_id)
 
 # Для обратной совместимости
-@metrics.get("/nlp/{ind_num}/{expedition_id}")
+@metrics.get("/nfb/{ind_num}/{expedition_id}")
 async def get_nlp_chart(
     ind_num: str,
     expedition_id: int

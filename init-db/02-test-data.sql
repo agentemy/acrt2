@@ -47,37 +47,39 @@ INSERT INTO participants (user_id, expedition_id) VALUES
 INSERT INTO cardio_metrics (individual_number, expedition_id, timestamp, session, heart_rate, stress_index, skin_contact)
 VALUES
     ('IND-000002', 1, 1741800000000, 1, 78.5,  22.3, 95),
-    ('IND-000002', 1, 1741803600000, 2, 92.1,  38.7, 88),
-    ('IND-000003', 1, 1741807200000, 2, 65.4,  12.1, 99),
+    ('IND-000002', 1, 1741800000300, 2, 88.5,  12.3, 85),
+    ('IND-000002', 1, 1741800000400, 3, 68.5,  2.3, 65),
     ('IND-000004', 1, 1741810800000, 1, 84.0,  29.5, 92);
 
 -- eeg_artifacts_metrics
 INSERT INTO eeg_artifacts_metrics (expedition_id, individual_number, timestamp, session, artifacts_channel_1, quality_channel_1)
 VALUES
     (1, 'IND-000002', 1741801200000, 1, 12, 92),
-    (1, 'IND-000003', 1741804800000, 1, 28, 78),
-    (1, 'IND-000004', 1741808400000, 1, 5,  96);
+    (1, 'IND-000002', 1741804800000, 2, 28, 78),
+    (1, 'IND-000002', 1741808400000, 3, 5,  96);
 
 -- eeg_proceed_metrics (обработанные)
 INSERT INTO eeg_proceed_metrics (expedition_id, individual_number, timestamp, session, channel_1, channel_2)
 VALUES
     (1, 'IND-000002', 1741801500000, 1, 12.45, -3.21),
-    (1, 'IND-000003', 1741805100000, 1, 8.76,  4.12);
+    (1, 'IND-000002', 1741805100000, 1, 8.76,  4.12);
 
 -- emotional_metrics
 INSERT INTO emotional_metrics (expedition_id, individual_number, timestamp, session, attention, relaxation, cognitive_load)
 VALUES
-    (1, 'IND-000002', 1741802000000, 1, 0.82, 0.65, 0.71),
-    (1, 'IND-000003', 1741805600000, 1, 0.91, 0.48, 0.85),
-    (1, 'IND-000004', 1741809200000, 1, 0.67, 0.79, 0.62);
+    (1, 'IND-000002', 1741802000000, 1741802000000, 0.82, 0.65, 0.71),
+    (1, 'IND-000002', 1741805600000, 1741805600000, 0.91, 0.48, 0.85),
+    (1, 'IND-000002', 1741804000000, 1741804000000, 0.62, 0.85, 0.91),
+    (1, 'IND-000002', 1741809300000,  1741809300000, 0.67, 0.79, 0.62);
 
 -- mems_metrics (акселерометр + гироскоп)
 INSERT INTO mems_metrics (expedition_id, individual_number, timestamp, session,
     accelerometer_x, accelerometer_y, accelerometer_z,
     gyroscope_x, gyroscope_y, gyroscope_z)
 VALUES
-    (1, 'IND-000002', 1741803000000, 1, 0.02, -0.01, 9.81, 0.05, -0.03, 0.01),
-    (1, 'IND-000003', 1741806600000, 1, 0.15, 0.08, 9.75, 0.12, 0.07, -0.04);
+    (1, 'IND-000002', 1741803000000, 2, 0.02, -0.01, 9.81, 0.05, -0.03, 0.01),
+    (1, 'IND-000002', 1741804000000, 2, 0.02, -0.02, 9.71, 0.05, -0.03, 0.02),
+    (1, 'IND-000002', 1741806600000, 3, 0.15, 0.08, 9.75, 0.12, 0.07, -0.04);
 
 -- nfb_metrics (спектральные мощности — здесь, видимо, EEG bands)
 INSERT INTO nfb_metrics (expedition_id, individual_number, timestamp, session, alpha, beta, theta, delta)
@@ -91,10 +93,10 @@ VALUES
 INSERT INTO physiological_metrics (expedition_id, individual_number, timestamp, session, relax, fatigue, concentration, stress)
 VALUES
     (1, 'IND-000002', 1741805000000, 1, 0.68, 0.42, 0.75, 0.33),
-    (1, 'IND-000003', 1741808600000, 1, 0.81, 0.29, 0.88, 0.19);
+    (1, 'IND-000002', 1741808600000, 2, 0.81, 0.29, 0.88, 0.19);
 
 -- productivity_metrics
 INSERT INTO productivity_metrics (expedition_id, individual_number, timestamp, session, productivity, fatigue, concentration)
 VALUES
     (1, 'IND-000002', 1741806000000, 1, 0.76, 0.38, 0.82),
-    (1, 'IND-000004', 1741809600000, 1, 0.64, 0.51, 0.69);
+    (1, 'IND-000002', 1741809600000, 2, 0.64, 0.51, 0.69);
