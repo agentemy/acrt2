@@ -63,7 +63,7 @@ async def get_concentration_chart(
     """График концентрации"""
     return await create_concentration_chart(ind_num, expedition_id)
 
-@metrics.get("/relaxation/{ind_num}/expedition_id}")
+@metrics.get("/relaxation/{ind_num}/{expedition_id}")
 async def get_relaxation_chart(
     ind_num: str,
     expedition_id: int

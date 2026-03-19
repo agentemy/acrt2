@@ -79,8 +79,8 @@ VALUES
     (1, 'IND-000002', 1741803000000, 1, 0.02, -0.01, 9.81, 0.05, -0.03, 0.01),
     (1, 'IND-000003', 1741806600000, 1, 0.15, 0.08, 9.75, 0.12, 0.07, -0.04);
 
--- nlp_metrics (спектральные мощности — здесь, видимо, EEG bands)
-INSERT INTO nlp_metrics (expedition_id, individual_number, timestamp, session, alpha, beta, theta, delta)
+-- nfb_metrics (спектральные мощности — здесь, видимо, EEG bands)
+INSERT INTO nfb_metrics (expedition_id, individual_number, timestamp, session, alpha, beta, theta, delta)
 VALUES
     (1, 'IND-000002', 1741804000000, 1, 12.4, 8.7, 15.2, 4.1),
     (1, 'IND-000002', 1741804000000, 2, 12.4, 8.7, 15.2, 4.1),

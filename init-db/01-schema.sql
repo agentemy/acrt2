@@ -110,7 +110,7 @@ CREATE TABLE mems_metrics (
     gyroscope_z DOUBLE PRECISION
 );
 
-CREATE TABLE nlp_metrics (
+CREATE TABLE nfb_metrics (
     id BIGSERIAL PRIMARY KEY,
     expedition_id BIGSERIAL,
     individual_number VARCHAR(255) NOT NULL,
