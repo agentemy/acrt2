@@ -27,7 +27,6 @@ async def chart(
 
     df = pd.DataFrame(data)
 
-    # Агрегируем по сессиям
     session_avg = df.groupby('session')[['alpha', 'beta', 'theta']].mean().reset_index()
 
     session_map = {1: 'утро', 2: 'день', 3: 'вечер'}
@@ -44,7 +43,6 @@ async def chart(
         width=0.75
     )
 
-    # Добавляем значения на столбцы
     for container in ax.containers:
         ax.bar_label(container, fmt='%.2f', padding=3, fontsize=9)
 
@@ -55,7 +53,6 @@ async def chart(
     ax.legend(['Alpha', 'Beta', 'Theta'], fontsize=11, loc='upper right')
     ax.grid(True, axis='y', linestyle='--', alpha=0.7)
 
-    # Добавляем информацию об экспедиции если указана
     if expedition_id:
         ax.set_title(f'Экспедиция #{expedition_id} - {ax.get_title()}',
                      fontsize=14, pad=15)

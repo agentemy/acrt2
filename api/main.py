@@ -14,9 +14,9 @@ async def lifespan(app):
 
 app = FastAPI(lifespan=lifespan)
 
-app.include_router(metrics, prefix="/metrics")
-app.include_router(expedition, prefix="/expedition")
-app.include_router(gigachat_router, prefix="/giga")
+app.include_router(metrics, prefix="/api/metrics")
+app.include_router(expedition, prefix="/api/expedition")
+app.include_router(gigachat_router, prefix="/api/giga")
 
 
 @app.get("/")
@@ -28,16 +28,16 @@ async def root():
                 "/health": "Проверка здоровья сервиса"
             },
             "Графики по участнику": {
-                "/metrics/alpha-beta-theta/{ind_num}/{expedition_id}": "Alpha, Beta, Theta волны",
-                "/metrics/fatigue/{ind_num}/{expedition_id}": "Утомление (Fatigue)",
-                "/metrics/heart-rate/{ind_num}/{expedition_id}": "Частота сердечных сокращений",
-                "/metrics/psychological-fatigue/{ind_num}/{expedition_id}": "Психологическое утомление",
-                "/metrics/gravity/{ind_num}/{expedition_id}": "Gravity метрика",
-                "/metrics/concentration/{ind_num}/{expedition_id}": "Концентрация",
-                "/metrics/relaxation/{ind_num}/{expedition_id}": "Расслабление"
+                "/api/metrics/alpha-beta-theta/{ind_num}/{expedition_id}": "Alpha, Beta, Theta волны",
+                "/api/metrics/fatigue/{ind_num}/{expedition_id}": "Утомление (Fatigue)",
+                "/api/metrics/heart-rate/{ind_num}/{expedition_id}": "Частота сердечных сокращений",
+                "/api/metrics/psychological-fatigue/{ind_num}/{expedition_id}": "Психологическое утомление",
+                "/api/metrics/gravity/{ind_num}/{expedition_id}": "Gravity метрика",
+                "/api/metrics/concentration/{ind_num}/{expedition_id}": "Концентрация",
+                "/api/metrics/relaxation/{ind_num}/{expedition_id}": "Расслабление"
             },
             "Агрегированные": {
-                "/expedition/{expedition_id}/stress": "Стресс по экспедиции"
+                "/api/expedition/{expedition_id}/stress": "Стресс по экспедиции"
             }
         }
     }
