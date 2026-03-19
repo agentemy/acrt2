@@ -47,7 +47,7 @@ INSERT INTO participants (user_id, expedition_id) VALUES
 INSERT INTO cardio_metrics (individual_number, expedition_id, timestamp, session, heart_rate, stress_index, skin_contact)
 VALUES
     ('IND-000002', 1, 1741800000000, 1, 78.5,  22.3, 95),
-    ('IND-000002', 1, 1741803600000, 1, 92.1,  38.7, 88),
+    ('IND-000002', 1, 1741803600000, 2, 92.1,  38.7, 88),
     ('IND-000003', 1, 1741807200000, 2, 65.4,  12.1, 99),
     ('IND-000004', 1, 1741810800000, 1, 84.0,  29.5, 92);
 

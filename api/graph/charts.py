@@ -94,7 +94,7 @@ async def create_alpha_beta_theta_chart(
         expedition_id: Optional[int] = None
 ) -> Response:
     """
-    График 1: Alpha, Beta, Theta волны
+    График 1: Alpha, Beta, Theta волны (столбчатая диаграмма по времени суток)
     """
     data = await get_nlp_metrics(individual_number, expedition_id)
 
@@ -102,40 +102,57 @@ async def create_alpha_beta_theta_chart(
         raise HTTPException(status_code=404, detail="Данные не найдены")
 
     df = pd.DataFrame(data)
-    df['datetime'] = pd.to_datetime(df['timestamp'], unit='ms')
 
-    fig, axes = plt.subplots(3, 1, figsize=(12, 10))
+    # Маппинг номеров сессий на названия времени суток
+    session_map = {1: 'утро', 2: 'день', 3: 'вечер'}
 
-    # Alpha волны
-    axes[0].plot(df['datetime'], df['alpha'],
-                 marker='o', color=COLORS[0], linewidth=2, markersize=4)
-    axes[0].fill_between(df['datetime'], df['alpha'], alpha=0.3, color=COLORS[0])
-    axes[0].set_ylabel('Alpha', fontsize=11)
-    axes[0].grid(True, alpha=0.3)
-    axes[0].axhline(y=df['alpha'].mean(), color=COLORS[0], linestyle='--', alpha=0.5)
+    # Добавляем колонку с текстовыми названиями сессий
+    df['Сеанс'] = df['session'].map(session_map)
 
-    # Beta волны
-    axes[1].plot(df['datetime'], df['beta'],
-                 marker='s', color=COLORS[1], linewidth=2, markersize=4)
-    axes[1].fill_between(df['datetime'], df['beta'], alpha=0.3, color=COLORS[1])
-    axes[1].set_ylabel('Beta', fontsize=11)
-    axes[1].grid(True, alpha=0.3)
-    axes[1].axhline(y=df['beta'].mean(), color=COLORS[1], linestyle='--', alpha=0.5)
+    # Группируем по сеансам и считаем средние
+    brain_waves = df.groupby('Сеанс')[['alpha', 'beta', 'theta']].mean()
 
-    # Theta волны
-    axes[2].plot(df['datetime'], df['theta'],
-                 marker='^', color=COLORS[2], linewidth=2, markersize=4)
-    axes[2].fill_between(df['datetime'], df['theta'], alpha=0.3, color=COLORS[2])
-    axes[2].set_ylabel('Theta', fontsize=11)
-    axes[2].set_xlabel('Время', fontsize=11)
-    axes[2].grid(True, alpha=0.3)
-    axes[2].axhline(y=df['theta'].mean(), color=COLORS[2], linestyle='--', alpha=0.5)
+    # Устанавливаем правильный порядок сеансов
+    brain_waves = brain_waves.reindex(['утро', 'день', 'вечер'])
 
-    title = f'Мозговая активность: Alpha, Beta, Theta волны\nУчастник: {individual_number}'
+    # Создаем фигуру
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    # Строим столбчатую диаграмму
+    brain_waves.plot(
+        kind='bar',
+        ax=ax,
+        color=['#4682b4', '#32cd32', '#ff69b4'],
+        width=0.75
+    )
+
+    # Настройка графика
+    ax.set_title(
+        f'Средние значения мозговых волн по времени суток\nУчастник: {individual_number}',
+        fontsize=14,
+        pad=15
+    )
+    ax.set_xlabel('Время суток', fontsize=12)
+    ax.set_ylabel('Средняя амплитуда волн', fontsize=12)
+    ax.set_xticklabels(['Утро', 'День', 'Вечер'], rotation=0, fontsize=11)
+    ax.legend(['Alpha', 'Beta', 'Theta'], fontsize=11, loc='upper right')
+    ax.grid(True, axis='y', linestyle='--', alpha=0.7)
+
+    # Добавляем значения на столбцы
+    for container in ax.containers:
+        ax.bar_label(container, fmt='%.1f', padding=3, fontsize=9)
+
+    # Добавляем информацию об экспедиции если есть
     if expedition_id:
-        title = f'Экспедиция #{expedition_id} - {title}'
+        ax.text(
+            0.02, 0.98,
+            f'Экспедиция: {expedition_id}',
+            transform=ax.transAxes,
+            fontsize=10,
+            verticalalignment='top',
+            bbox=dict(boxstyle='round', facecolor='white', alpha=0.8)
+        )
 
-    plt.suptitle(title, fontsize=14, y=1.02)
     plt.tight_layout()
 
     return _fig_to_response(fig)
@@ -146,7 +163,7 @@ async def create_fatigue_chart(
         expedition_id: Optional[int] = None
 ) -> Response:
     """
-    График 2: Fatigue (утомление) из разных источников
+    График 2: Fatigue (утомление) по времени суток
     """
     # Получаем данные из разных таблиц
     physio_data = await get_physiological_metrics(individual_number, expedition_id)
@@ -155,30 +172,61 @@ async def create_fatigue_chart(
     if not physio_data and not product_data:
         raise HTTPException(status_code=404, detail="Данные не найдены")
 
-    fig, ax = plt.subplots(figsize=(12, 6))
+    # Маппинг номеров сессий на названия времени суток
+    session_map = {1: 'утро', 2: 'день', 3: 'вечер'}
+
+    fig, ax = plt.subplots(figsize=(10, 6))
 
     # Физиологическое утомление
     if physio_data:
         df_physio = pd.DataFrame(physio_data)
-        df_physio['datetime'] = pd.to_datetime(df_physio['timestamp'], unit='ms')
-        ax.plot(df_physio['datetime'], df_physio['fatigue'],
-                marker='o', color=COLORS[0], linewidth=2, markersize=6,
+        df_physio['Сеанс'] = df_physio['session'].map(session_map)
+
+        # Группируем по сеансам и считаем средние
+        physio_fatigue = df_physio.groupby('Сеанс')['fatigue'].mean()
+        physio_fatigue = physio_fatigue.reindex(['утро', 'день', 'вечер'])
+
+        # Строим график
+        ax.plot(physio_fatigue.index, physio_fatigue.values,
+                marker='o', color='#1e90ff', linewidth=2, markersize=8,
                 label='Физиологическое утомление')
+
+        # Добавляем значения
+        for i, (idx, val) in enumerate(physio_fatigue.items()):
+            if pd.notna(val):
+                ax.text(i, val + 0.02, f'{val:.2f}',
+                        ha='center', va='bottom', fontsize=10)
 
     # Утомление из продуктивности
     if product_data:
         df_product = pd.DataFrame(product_data)
-        df_product['datetime'] = pd.to_datetime(df_product['timestamp'], unit='ms')
-        ax.plot(df_product['datetime'], df_product['fatigue'],
-                marker='s', color=COLORS[1], linewidth=2, markersize=6,
+        df_product['Сеанс'] = df_product['session'].map(session_map)
+
+        # Группируем по сеансам и считаем средние
+        product_fatigue = df_product.groupby('Сеанс')['fatigue'].mean()
+        product_fatigue = product_fatigue.reindex(['утро', 'день', 'вечер'])
+
+        # Строим график
+        ax.plot(product_fatigue.index, product_fatigue.values,
+                marker='s', color='#ff6347', linewidth=2, markersize=8,
                 label='Утомление (продуктивность)')
 
-    ax.set_xlabel('Время', fontsize=12)
-    ax.set_ylabel('Уровень утомления', fontsize=12)
-    ax.legend(fontsize=11)
+        # Добавляем значения
+        for i, (idx, val) in enumerate(product_fatigue.items()):
+            if pd.notna(val):
+                ax.text(i, val + 0.02, f'{val:.2f}',
+                        ha='center', va='bottom', fontsize=10, color='#ff6347')
+
+    # Настройка графика
+    ax.set_xlabel('Время суток', fontsize=12)
+    ax.set_ylabel('Средний уровень утомления', fontsize=12)
+    ax.set_ylim(0, 1)
+    ax.legend(fontsize=11, loc='upper left')
     ax.grid(True, alpha=0.3)
 
-    title = f'Динамика утомления (Fatigue)\nУчастник: {individual_number}'
+    ax.axhline(y=0.7, color='red', linestyle='--', alpha=0.5, label='Критический уровень (0.7)')
+
+    title = f'Динамика утомления по времени суток\nУчастник: {individual_number}'
     if expedition_id:
         title = f'Экспедиция #{expedition_id} - {title}'
 
@@ -193,7 +241,7 @@ async def create_heart_rate_chart(
         expedition_id: Optional[int] = None
 ) -> Response:
     """
-    График 3: Heart Rate (частота сердечных сокращений)
+    График 3: Heart Rate (частота сердечных сокращений) по времени суток
     """
     data = await get_cardio_metrics(individual_number, expedition_id)
 
@@ -201,29 +249,69 @@ async def create_heart_rate_chart(
         raise HTTPException(status_code=404, detail="Данные не найдены")
 
     df = pd.DataFrame(data)
-    df['datetime'] = pd.to_datetime(df['timestamp'], unit='ms')
 
-    fig, ax = plt.subplots(figsize=(12, 6))
+    # Маппинг номеров сессий на названия времени суток
+    session_map = {1: 'утро', 2: 'день', 3: 'вечер'}
 
-    ax.plot(df['datetime'], df['heart_rate'],
-            marker='o', color=COLORS[0], linewidth=2, markersize=6)
-    ax.fill_between(df['datetime'], df['heart_rate'], alpha=0.3, color=COLORS[0])
+    # Добавляем колонку с названиями сеансов
+    df['Сеанс'] = df['session'].map(session_map)
 
-    # Добавляем зоны ЧСС
-    ax.axhline(y=60, color='green', linestyle='--', alpha=0.5, label='Норма (60)')
-    ax.axhline(y=100, color='red', linestyle='--', alpha=0.5, label='Тахикардия (100)')
+    # Группируем по сеансам и считаем средние
+    hr_by_session = df.groupby('Сеанс')['heart_rate'].mean()
+    hr_by_session = hr_by_session.reindex(['утро', 'день', 'вечер'])
 
-    ax.set_xlabel('Время', fontsize=12)
-    ax.set_ylabel('ЧСС (уд/мин)', fontsize=12)
-    ax.legend(fontsize=11)
+    # Строим график
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    # Основная линия
+    line = ax.plot(hr_by_session.index, hr_by_session.values,
+                   marker='o', color='#1e90ff', linewidth=2, markersize=10,
+                   label='Средняя ЧСС')[0]
+
+    # Добавляем значения
+    for i, (idx, val) in enumerate(hr_by_session.items()):
+        if pd.notna(val):
+            ax.text(i, val + 2, f'{val:.0f}',
+                    ha='center', va='bottom', fontsize=11, fontweight='bold')
+
+    # Зоны ЧСС - располагаем легенды в разных местах
+    norm_line = ax.axhline(y=60, color='green', linestyle='--', alpha=0.7, linewidth=1.5,
+                           label='Нижняя граница нормы (60)')
+
+    upper_norm_line = ax.axhline(y=80, color='orange', linestyle='--', alpha=0.7, linewidth=1.5,
+                                 label='Верхняя граница нормы (80)')
+
+    tachy_line = ax.axhline(y=100, color='red', linestyle='--', alpha=0.7, linewidth=1.5,
+                            label='Тахикардия (100)')
+
+    # Настройка осей
+    ax.set_xlabel('Время суток', fontsize=12)
+    ax.set_ylabel('Средняя ЧСС (уд/мин)', fontsize=12)
+    ax.set_xticklabels(['Утро', 'День', 'Вечер'], fontsize=11)
     ax.grid(True, alpha=0.3)
 
-    # Статистика
-    stats_text = f"Среднее: {df['heart_rate'].mean():.1f}\nМин: {df['heart_rate'].min():.1f}\nМакс: {df['heart_rate'].max():.1f}"
-    ax.text(0.02, 0.98, stats_text, transform=ax.transAxes, fontsize=10,
-            verticalalignment='top', bbox=dict(boxstyle='round', facecolor='white', alpha=0.8))
+    # РАСПОЛАГАЕМ ЛЕГЕНДЫ В РАЗНЫХ МЕСТАХ
+    # Легенда для основной линии - вверху слева
+    first_legend = ax.legend(handles=[line], loc='upper left', fontsize=10, framealpha=0.9)
+    ax.add_artist(first_legend)
 
-    title = f'Частота сердечных сокращений\nУчастник: {individual_number}'
+    # Легенда для норм - внизу слева
+    ax.legend(handles=[norm_line, upper_norm_line, tachy_line],
+              loc='lower left', fontsize=9, framealpha=0.9,
+              title='Зоны ЧСС', title_fontsize=10)
+
+    # Статистика - вверху справа
+    stats_text = (
+        f"Среднее: {hr_by_session.mean():.1f}\n"
+        f"Мин: {df['heart_rate'].min():.1f}\n"
+        f"Макс: {df['heart_rate'].max():.1f}"
+    )
+
+    ax.text(0.98, 0.98, stats_text, transform=ax.transAxes, fontsize=10,
+            verticalalignment='top', horizontalalignment='right',
+            bbox=dict(boxstyle='round', facecolor='white', alpha=0.8))
+
+    title = f'Частота сердечных сокращений по времени суток\nУчастник: {individual_number}'
     if expedition_id:
         title = f'Экспедиция #{expedition_id} - {title}'
 

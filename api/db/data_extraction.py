@@ -9,16 +9,16 @@ async def get_nlp_metrics(
 ) -> List[Dict[str, Any]]:
 
     async with async_session_maker() as session:
-        NlpMetrics = Base.classes.nlp_metrics
+        NfbMetrics = Base.classes.nfb_metrics
 
-        query = select(NlpMetrics).where(
-            NlpMetrics.individual_number == individual_number
+        query = select(NfbMetrics).where(
+            NfbMetrics.individual_number == individual_number
         )
 
         if expedition_id:
-            query = query.where(NlpMetrics.expedition_id == expedition_id)
+            query = query.where(NfbMetrics.expedition_id == expedition_id)
 
-        query = query.order_by(NlpMetrics.timestamp)
+        query = query.order_by(NfbMetrics.timestamp)
 
         result = await session.execute(query)
         rows = result.scalars().all()
